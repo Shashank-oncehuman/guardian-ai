@@ -1,25 +1,46 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { ShieldCheck, Upload } from "lucide-react";
+import { useMutation } from "@tanstack/react-query";
 import AppLayout from "@/components/layout/AppLayout";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { submitComplaint } from "@/lib/api";
 
 export default function WhistleblowerPage() {
   const [form, setForm] = useState({ name: "", entityName: "", department: "", location: "", description: "", amount: "", anonymous: true });
   const [submitted, setSubmitted] = useState(false);
   const [trackingId, setTrackingId] = useState("");
 
+  const mutation = useMutation({
+    mutationFn: submitComplaint,
+    onSuccess: (data) => {
+      setTrackingId(data.tracking_id);
+      setSubmitted(true);
+      toast.success("Complaint submitted securely");
+    },
+    onError: (err: any) => {
+      toast.error(err.message || "Failed to submit complaint");
+    },
+  });
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!form.entityName || !form.description) {
+    if (!form.entityName.trim() || !form.description.trim()) {
       toast.error("Please fill in the required fields");
       return;
     }
     const id = `WB-2026-${String(Math.floor(Math.random() * 9000) + 1000)}`;
-    setTrackingId(id);
-    setSubmitted(true);
-    toast.success("Complaint submitted securely");
+    mutation.mutate({
+      tracking_id: id,
+      entity_name: form.entityName.trim(),
+      department: form.department.trim() || undefined,
+      location: form.location.trim() || undefined,
+      description: form.description.trim(),
+      amount: form.amount ? parseInt(form.amount) : undefined,
+      anonymous: form.anonymous,
+      reporter_name: !form.anonymous ? form.name.trim() || undefined : undefined,
+    });
   };
 
   if (submitted) {
@@ -52,7 +73,7 @@ export default function WhistleblowerPage() {
 
         <div className="flex items-center gap-3 p-3 rounded-lg bg-success/10 border border-success/20">
           <ShieldCheck className="w-5 h-5 text-success shrink-0" />
-          <p className="text-xs text-success">Your identity is encrypted and protected. Reports are processed through secure channels.</p>
+          <p className="text-xs text-success">Your identity is encrypted and protected. Reports are stored in secure database.</p>
         </div>
 
         <form onSubmit={handleSubmit} className="glass-panel p-6 space-y-4">
@@ -99,8 +120,8 @@ export default function WhistleblowerPage() {
             <p className="text-xs text-muted-foreground mt-2">Upload evidence (documents, images, videos)</p>
           </div>
 
-          <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
-            Submit Report Securely
+          <Button type="submit" disabled={mutation.isPending} className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
+            {mutation.isPending ? "Submitting..." : "Submit Report Securely"}
           </Button>
         </form>
       </div>

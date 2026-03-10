@@ -14,7 +14,271 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      audit_logs: {
+        Row: {
+          action: string
+          created_at: string | null
+          details: Json | null
+          id: string
+          ip_address: string | null
+        }
+        Insert: {
+          action: string
+          created_at?: string | null
+          details?: Json | null
+          id?: string
+          ip_address?: string | null
+        }
+        Update: {
+          action?: string
+          created_at?: string | null
+          details?: Json | null
+          id?: string
+          ip_address?: string | null
+        }
+        Relationships: []
+      }
+      complaints: {
+        Row: {
+          amount: number | null
+          anonymous: boolean | null
+          created_at: string | null
+          department: string | null
+          description: string
+          entity_id: string | null
+          entity_name: string
+          id: string
+          location: string | null
+          reporter_name: string | null
+          status: Database["public"]["Enums"]["complaint_status"] | null
+          tracking_id: string
+        }
+        Insert: {
+          amount?: number | null
+          anonymous?: boolean | null
+          created_at?: string | null
+          department?: string | null
+          description: string
+          entity_id?: string | null
+          entity_name: string
+          id?: string
+          location?: string | null
+          reporter_name?: string | null
+          status?: Database["public"]["Enums"]["complaint_status"] | null
+          tracking_id: string
+        }
+        Update: {
+          amount?: number | null
+          anonymous?: boolean | null
+          created_at?: string | null
+          department?: string | null
+          description?: string
+          entity_id?: string | null
+          entity_name?: string
+          id?: string
+          location?: string | null
+          reporter_name?: string | null
+          status?: Database["public"]["Enums"]["complaint_status"] | null
+          tracking_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "complaints_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      entities: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          complaints_count: number | null
+          contracts_count: number | null
+          created_at: string | null
+          dark_web_signals: number | null
+          department: string | null
+          designation: string | null
+          financial_anomalies: number | null
+          id: string
+          location: string
+          name: string
+          news_hits: number | null
+          political_connections: number | null
+          prediction_score: number | null
+          risk_level: Database["public"]["Enums"]["risk_level"] | null
+          risk_score: number | null
+          type: Database["public"]["Enums"]["entity_type"]
+          updated_at: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          complaints_count?: number | null
+          contracts_count?: number | null
+          created_at?: string | null
+          dark_web_signals?: number | null
+          department?: string | null
+          designation?: string | null
+          financial_anomalies?: number | null
+          id?: string
+          location: string
+          name: string
+          news_hits?: number | null
+          political_connections?: number | null
+          prediction_score?: number | null
+          risk_level?: Database["public"]["Enums"]["risk_level"] | null
+          risk_score?: number | null
+          type: Database["public"]["Enums"]["entity_type"]
+          updated_at?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          complaints_count?: number | null
+          contracts_count?: number | null
+          created_at?: string | null
+          dark_web_signals?: number | null
+          department?: string | null
+          designation?: string | null
+          financial_anomalies?: number | null
+          id?: string
+          location?: string
+          name?: string
+          news_hits?: number | null
+          political_connections?: number | null
+          prediction_score?: number | null
+          risk_level?: Database["public"]["Enums"]["risk_level"] | null
+          risk_score?: number | null
+          type?: Database["public"]["Enums"]["entity_type"]
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      news_reports: {
+        Row: {
+          content: string | null
+          created_at: string | null
+          headline: string
+          id: string
+          keywords: string[] | null
+          linked_entities: string[] | null
+          published_date: string | null
+          risk_level: Database["public"]["Enums"]["risk_level"] | null
+          source: string
+          url: string | null
+        }
+        Insert: {
+          content?: string | null
+          created_at?: string | null
+          headline: string
+          id?: string
+          keywords?: string[] | null
+          linked_entities?: string[] | null
+          published_date?: string | null
+          risk_level?: Database["public"]["Enums"]["risk_level"] | null
+          source: string
+          url?: string | null
+        }
+        Update: {
+          content?: string | null
+          created_at?: string | null
+          headline?: string
+          id?: string
+          keywords?: string[] | null
+          linked_entities?: string[] | null
+          published_date?: string | null
+          risk_level?: Database["public"]["Enums"]["risk_level"] | null
+          source?: string
+          url?: string | null
+        }
+        Relationships: []
+      }
+      predictions: {
+        Row: {
+          ai_analysis: string | null
+          created_at: string | null
+          entity_id: string | null
+          id: string
+          model_used: string | null
+          prediction_score: number
+          risk_factors: Json | null
+        }
+        Insert: {
+          ai_analysis?: string | null
+          created_at?: string | null
+          entity_id?: string | null
+          id?: string
+          model_used?: string | null
+          prediction_score: number
+          risk_factors?: Json | null
+        }
+        Update: {
+          ai_analysis?: string | null
+          created_at?: string | null
+          entity_id?: string | null
+          id?: string
+          model_used?: string | null
+          prediction_score?: number
+          risk_factors?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "predictions_entity_id_fkey"
+            columns: ["entity_id"]
+            isOneToOne: false
+            referencedRelation: "entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      relationships: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          id: string
+          relationship_type: string
+          source_entity_id: string | null
+          strength: number | null
+          target_entity_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          relationship_type: string
+          source_entity_id?: string | null
+          strength?: number | null
+          target_entity_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          relationship_type?: string
+          source_entity_id?: string | null
+          strength?: number | null
+          target_entity_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "relationships_source_entity_id_fkey"
+            columns: ["source_entity_id"]
+            isOneToOne: false
+            referencedRelation: "entities"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "relationships_target_entity_id_fkey"
+            columns: ["target_entity_id"]
+            isOneToOne: false
+            referencedRelation: "entities"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +287,15 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      complaint_status: "pending" | "investigating" | "resolved"
+      entity_type:
+        | "officer"
+        | "politician"
+        | "contractor"
+        | "company"
+        | "celebrity"
+        | "business_magnate"
+      risk_level: "low" | "medium" | "high"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +422,17 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      complaint_status: ["pending", "investigating", "resolved"],
+      entity_type: [
+        "officer",
+        "politician",
+        "contractor",
+        "company",
+        "celebrity",
+        "business_magnate",
+      ],
+      risk_level: ["low", "medium", "high"],
+    },
   },
 } as const
