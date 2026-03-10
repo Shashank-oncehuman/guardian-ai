@@ -1,78 +1,126 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, User, Building, Briefcase, Landmark } from "lucide-react";
+import { Search, User, Building, Briefcase, Landmark, Crown, Brain, Loader2 } from "lucide-react";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import AppLayout from "@/components/layout/AppLayout";
 import RiskBadge from "@/components/dashboard/RiskBadge";
 import RiskScoreGauge from "@/components/dashboard/RiskScoreGauge";
-import { entities, Entity } from "@/data/mockData";
+import { fetchEntities, analyzeEntity, DbEntity } from "@/lib/api";
+import type { RiskLevel } from "@/data/mockData";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 const typeIcons: Record<string, typeof User> = {
   officer: User,
   politician: Landmark,
   contractor: Briefcase,
   company: Building,
+  celebrity: Crown,
+  business_magnate: Crown,
 };
 
-function EntityProfile({ entity }: { entity: Entity }) {
+function EntityProfile({ entity }: { entity: DbEntity }) {
+  const [aiResult, setAiResult] = useState<any>(null);
+
+  const aiMutation = useMutation({
+    mutationFn: () => analyzeEntity(entity),
+    onSuccess: (data) => {
+      setAiResult(data);
+      toast.success("AI analysis complete");
+    },
+    onError: (err: any) => {
+      toast.error(err.message || "AI analysis failed");
+    },
+  });
+
   const factors = [
-    { label: "Complaint History", value: entity.complaints, max: 25, weight: 25 },
-    { label: "Contract Irregularities", value: entity.contracts > 40 ? 30 : entity.contracts > 20 ? 15 : 5, max: 30, weight: 30 },
-    { label: "Political Connections", value: entity.politicalConnections, max: 20, weight: 20 },
-    { label: "News Scandals", value: entity.newsHits, max: 15, weight: 15 },
-    { label: "Dark Web Signals", value: entity.darkWebSignals, max: 25, weight: 25 },
-    { label: "Financial Anomalies", value: entity.financialAnomalies, max: 20, weight: 20 },
+    { label: "Complaint History", value: entity.complaints_count, max: 35 },
+    { label: "Contract Irregularities", value: entity.contracts_count > 40 ? 30 : entity.contracts_count > 20 ? 15 : 5, max: 30 },
+    { label: "Political Connections", value: entity.political_connections, max: 20 },
+    { label: "News Scandals", value: entity.news_hits, max: 50 },
+    { label: "Dark Web Signals", value: entity.dark_web_signals, max: 10 },
+    { label: "Financial Anomalies", value: entity.financial_anomalies, max: 15 },
   ];
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="glass-panel p-6 space-y-6">
       <div className="flex items-start gap-6">
-        <RiskScoreGauge score={entity.riskScore} size={130} />
+        <RiskScoreGauge score={entity.risk_score} size={130} />
         <div className="flex-1">
           <div className="flex items-center gap-3">
             <h2 className="text-xl font-bold">{entity.name}</h2>
-            <RiskBadge level={entity.riskLevel} />
+            <RiskBadge level={entity.risk_level as RiskLevel} />
           </div>
           <p className="text-sm text-muted-foreground mt-1">{entity.designation} • {entity.department}</p>
           <p className="text-xs text-muted-foreground">{entity.location}</p>
+          {entity.bio && <p className="text-xs text-muted-foreground mt-2 leading-relaxed">{entity.bio}</p>}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4">
-            <div className="p-2.5 rounded-lg bg-secondary/50 text-center">
-              <p className="text-lg font-bold">{entity.complaints}</p>
-              <p className="text-[10px] text-muted-foreground">Complaints</p>
-            </div>
-            <div className="p-2.5 rounded-lg bg-secondary/50 text-center">
-              <p className="text-lg font-bold">{entity.contracts}</p>
-              <p className="text-[10px] text-muted-foreground">Contracts</p>
-            </div>
-            <div className="p-2.5 rounded-lg bg-secondary/50 text-center">
-              <p className="text-lg font-bold">{entity.newsHits}</p>
-              <p className="text-[10px] text-muted-foreground">News Hits</p>
-            </div>
-            <div className="p-2.5 rounded-lg bg-secondary/50 text-center">
-              <p className="text-lg font-bold">{entity.darkWebSignals}</p>
-              <p className="text-[10px] text-muted-foreground">Dark Web</p>
-            </div>
+            {[
+              { v: entity.complaints_count, l: "Complaints" },
+              { v: entity.contracts_count, l: "Contracts" },
+              { v: entity.news_hits, l: "News Hits" },
+              { v: entity.dark_web_signals, l: "Dark Web" },
+            ].map((s) => (
+              <div key={s.l} className="p-2.5 rounded-lg bg-secondary/50 text-center">
+                <p className="text-lg font-bold">{s.v}</p>
+                <p className="text-[10px] text-muted-foreground">{s.l}</p>
+              </div>
+            ))}
           </div>
         </div>
       </div>
 
-      <div>
-        <h3 className="text-sm font-semibold mb-3">AI Corruption Prediction</h3>
-        <div className="flex items-center gap-4 p-4 rounded-lg bg-secondary/30">
-          <div className="text-center">
-            <p className="text-3xl font-bold text-gradient-danger">{entity.predictionScore}%</p>
-            <p className="text-xs text-muted-foreground mt-1">Corruption Probability</p>
+      {/* AI Analysis Button */}
+      <div className="p-4 rounded-lg bg-primary/5 border border-primary/20">
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <Brain className="w-4 h-4 text-primary" />
+            <h3 className="text-sm font-semibold">AI Corruption Analysis</h3>
           </div>
-          <div className="flex-1">
-            <p className="text-xs text-muted-foreground mb-1">Risk Factors Detected:</p>
-            <div className="flex flex-wrap gap-1.5">
-              {entity.complaints > 5 && <span className="px-2 py-0.5 rounded-full bg-danger/15 text-danger text-[10px]">Complaint Pattern</span>}
-              {entity.contracts > 30 && <span className="px-2 py-0.5 rounded-full bg-warning/15 text-warning text-[10px]">Contract Favoritism</span>}
-              {entity.politicalConnections > 3 && <span className="px-2 py-0.5 rounded-full bg-primary/15 text-primary text-[10px]">Political Links</span>}
-              {entity.financialAnomalies > 3 && <span className="px-2 py-0.5 rounded-full bg-danger/15 text-danger text-[10px]">Financial Anomalies</span>}
-              {entity.darkWebSignals > 0 && <span className="px-2 py-0.5 rounded-full bg-danger/15 text-danger text-[10px]">Dark Web Activity</span>}
-            </div>
-          </div>
+          <Button
+            size="sm"
+            onClick={() => aiMutation.mutate()}
+            disabled={aiMutation.isPending}
+            className="bg-primary hover:bg-primary/90 text-primary-foreground"
+          >
+            {aiMutation.isPending ? <><Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" /> Analyzing...</> : "Run AI Analysis"}
+          </Button>
         </div>
+
+        {aiResult ? (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-3">
+            <div className="flex items-center gap-4">
+              <div className="text-center">
+                <p className="text-3xl font-bold text-gradient-danger">{aiResult.prediction_score}%</p>
+                <p className="text-xs text-muted-foreground">AI Predicted Risk</p>
+              </div>
+              <div className="flex-1 text-xs">
+                <span className={`px-2 py-0.5 rounded-full font-medium ${
+                  aiResult.recommendation === "urgent_action" ? "bg-danger/15 text-danger" :
+                  aiResult.recommendation === "investigate" ? "bg-warning/15 text-warning" :
+                  "bg-success/15 text-success"
+                }`}>
+                  {aiResult.recommendation === "urgent_action" ? "🔴 Urgent Action Required" :
+                   aiResult.recommendation === "investigate" ? "🟡 Investigation Recommended" :
+                   "🟢 Continue Monitoring"}
+                </span>
+                <span className="ml-2 text-muted-foreground">Confidence: {aiResult.confidence}%</span>
+              </div>
+            </div>
+            {aiResult.risk_factors && (
+              <div className="flex flex-wrap gap-1.5">
+                {aiResult.risk_factors.map((f: string, i: number) => (
+                  <span key={i} className="px-2 py-0.5 rounded-full bg-danger/10 text-danger text-[10px]">{f}</span>
+                ))}
+              </div>
+            )}
+            {aiResult.analysis && (
+              <p className="text-xs text-muted-foreground leading-relaxed whitespace-pre-line">{aiResult.analysis}</p>
+            )}
+          </motion.div>
+        ) : (
+          <p className="text-xs text-muted-foreground">Click "Run AI Analysis" to get an AI-powered corruption risk assessment.</p>
+        )}
       </div>
 
       <div>
@@ -105,25 +153,29 @@ function EntityProfile({ entity }: { entity: Entity }) {
 
 export default function SearchPage() {
   const [query, setQuery] = useState("");
-  const [selected, setSelected] = useState<Entity | null>(null);
+  const [selected, setSelected] = useState<DbEntity | null>(null);
 
-  const filtered = query.length >= 2
-    ? entities.filter((e) => e.name.toLowerCase().includes(query.toLowerCase()) || e.department?.toLowerCase().includes(query.toLowerCase()))
-    : [];
+  const { data: entities, isLoading } = useQuery({
+    queryKey: ["entities-search", query],
+    queryFn: () => fetchEntities(query),
+    enabled: query.length >= 2,
+  });
+
+  const filtered = entities || [];
 
   return (
     <AppLayout>
       <div className="space-y-6">
         <div>
           <h1 className="text-2xl font-bold">Entity Search</h1>
-          <p className="text-sm text-muted-foreground mt-1">Search officers, politicians, contractors, and companies</p>
+          <p className="text-sm text-muted-foreground mt-1">Search officers, politicians, contractors, companies & public figures</p>
         </div>
 
         <div className="relative max-w-2xl">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
           <input
             type="text"
-            placeholder="Search by name, department, or location..."
+            placeholder="Search by name, department, or location... (e.g. Nirav Modi, Vijay Mallya)"
             value={query}
             onChange={(e) => { setQuery(e.target.value); setSelected(null); }}
             className="w-full pl-12 pr-4 py-3.5 rounded-xl bg-secondary/50 border border-border/50 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition"
@@ -150,8 +202,8 @@ export default function SearchPage() {
                       <p className="text-xs text-muted-foreground">{entity.type} • {entity.department}</p>
                     </div>
                     <div className="text-right shrink-0">
-                      <p className={`text-lg font-bold ${entity.riskScore >= 61 ? "text-danger" : entity.riskScore >= 31 ? "text-warning" : "text-success"}`}>{entity.riskScore}</p>
-                      <RiskBadge level={entity.riskLevel} />
+                      <p className={`text-lg font-bold ${entity.risk_score >= 61 ? "text-danger" : entity.risk_score >= 31 ? "text-warning" : "text-success"}`}>{entity.risk_score}</p>
+                      <RiskBadge level={entity.risk_level as RiskLevel} />
                     </div>
                   </motion.button>
                 );
@@ -169,7 +221,8 @@ export default function SearchPage() {
           )}
         </AnimatePresence>
 
-        {query.length >= 2 && filtered.length === 0 && !selected && (
+        {isLoading && <p className="text-muted-foreground text-sm">Searching...</p>}
+        {query.length >= 2 && !isLoading && filtered.length === 0 && !selected && (
           <p className="text-muted-foreground text-sm">No entities found matching "{query}"</p>
         )}
       </div>
