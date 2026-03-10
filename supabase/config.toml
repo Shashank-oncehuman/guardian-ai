@@ -1,1 +1,4 @@
 project_id = "abadzqudlttlkfxmjtbt"
+
+[functions.analyze-corruption]
+verify_jwt = false
