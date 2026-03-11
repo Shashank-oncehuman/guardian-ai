@@ -133,7 +133,7 @@ function EntityProfile({ entity }: { entity: DbEntity }) {
       </div>
 
       {/* Action Buttons */}
-      <div className="flex gap-3">
+      <div className="flex flex-wrap gap-3">
         <Button
           size="sm"
           onClick={() => aiMutation.mutate()}
@@ -151,9 +151,103 @@ function EntityProfile({ entity }: { entity: DbEntity }) {
         >
           {investigateMutation.isPending ? <><Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" /> Investigating...</> : <><Scan className="w-3.5 h-3.5 mr-1.5" /> Deep Financial Investigation</>}
         </Button>
+        <Button
+          size="sm"
+          onClick={() => scrapeMutation.mutate()}
+          disabled={scrapeMutation.isPending}
+          variant="outline"
+          className="border-primary/50 text-primary hover:bg-primary/10"
+        >
+          {scrapeMutation.isPending ? <><Loader2 className="w-3.5 h-3.5 mr-1.5 animate-spin" /> Scraping Web...</> : <><Globe className="w-3.5 h-3.5 mr-1.5" /> Scrape Web Intel</>}
+        </Button>
       </div>
 
-      {/* AI Analysis Result */}
+      {/* Web Scrape Results */}
+      {scrapeResult && (
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-4 rounded-lg bg-accent/5 border border-accent/20 space-y-4">
+          <div className="flex items-center gap-2">
+            <Globe className="w-4 h-4 text-primary" />
+            <h3 className="text-sm font-semibold">Web Intelligence Report — {scrapeResult.articles_found} sources scraped</h3>
+          </div>
+
+          {scrapeResult.analysis?.summary && (
+            <div className="p-3 rounded-lg bg-secondary/30">
+              <p className="text-xs font-semibold mb-1">🔍 Intelligence Summary</p>
+              <p className="text-xs text-muted-foreground leading-relaxed whitespace-pre-line">{scrapeResult.analysis.summary}</p>
+            </div>
+          )}
+
+          {scrapeResult.analysis?.key_findings?.length > 0 && (
+            <div>
+              <p className="text-xs font-semibold mb-2">📋 Key Findings</p>
+              <div className="space-y-1.5">
+                {scrapeResult.analysis.key_findings.map((f: any, i: number) => (
+                  <div key={i} className={`p-2.5 rounded-lg text-xs flex items-start gap-2 ${
+                    f.severity === "high" ? "bg-danger/10 border border-danger/20" :
+                    f.severity === "medium" ? "bg-warning/10 border border-warning/20" :
+                    "bg-secondary/40 border border-border/30"
+                  }`}>
+                    <span className={`shrink-0 font-mono ${f.severity === "high" ? "text-danger" : f.severity === "medium" ? "text-warning" : "text-muted-foreground"}`}>[{f.severity?.toUpperCase()}]</span>
+                    <div>
+                      <p className="text-foreground">{f.finding}</p>
+                      <p className="text-muted-foreground text-[10px] mt-0.5">Source: {f.source}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {scrapeResult.analysis?.corruption_signals?.length > 0 && (
+            <div>
+              <p className="text-xs font-semibold mb-2 flex items-center gap-1"><ShieldAlert className="w-3 h-3 text-danger" /> Corruption Signals</p>
+              <div className="flex flex-wrap gap-1.5">
+                {scrapeResult.analysis.corruption_signals.map((s: string, i: number) => (
+                  <span key={i} className="px-2 py-0.5 rounded-full bg-danger/10 text-danger text-[10px]">{s}</span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {scrapeResult.analysis?.linked_entities?.length > 0 && (
+            <div>
+              <p className="text-xs font-semibold mb-2">🔗 Linked Entities Found</p>
+              <div className="flex flex-wrap gap-1.5">
+                {scrapeResult.analysis.linked_entities.map((name: string, i: number) => (
+                  <span key={i} className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[10px]">{name}</span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {scrapeResult.articles?.length > 0 && (
+            <div>
+              <p className="text-xs font-semibold mb-2">📰 Scraped Sources</p>
+              <div className="space-y-1.5 max-h-48 overflow-y-auto">
+                {scrapeResult.articles.map((a: any, i: number) => (
+                  <a key={i} href={a.url} target="_blank" rel="noopener noreferrer"
+                    className="flex items-center gap-2 p-2 rounded-lg bg-secondary/30 hover:bg-secondary/50 transition text-xs group">
+                    <ExternalLink className="w-3 h-3 text-muted-foreground group-hover:text-primary shrink-0" />
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-foreground group-hover:text-primary">{a.title}</p>
+                      <p className="text-[10px] text-muted-foreground">{a.source}</p>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {scrapeResult.analysis?.risk_adjustment != null && scrapeResult.analysis.risk_adjustment !== 0 && (
+            <div className={`p-2.5 rounded-lg flex items-center gap-2 text-xs ${
+              scrapeResult.analysis.risk_adjustment > 0 ? "bg-danger/10 border border-danger/20 text-danger" : "bg-success/10 border border-success/20 text-success"
+            }`}>
+              <TrendingUp className="w-3.5 h-3.5" />
+              <span className="font-medium">Risk Score Adjustment: {scrapeResult.analysis.risk_adjustment > 0 ? "+" : ""}{scrapeResult.analysis.risk_adjustment} based on web intelligence</span>
+            </div>
+          )}
+        </motion.div>
+      )
       {aiResult && (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-4 rounded-lg bg-primary/5 border border-primary/20 space-y-3">
           <div className="flex items-center gap-2 mb-2">
