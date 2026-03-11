@@ -19,6 +19,12 @@ export interface DbEntity {
   avatar_url: string | null;
   bio: string | null;
   created_at: string;
+  declared_income: number;
+  known_spending: number;
+  known_assets: number;
+  wealth_source: string | null;
+  income_spending_ratio: number;
+  disproportionate_wealth: boolean;
 }
 
 export interface DbComplaint {
