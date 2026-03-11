@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, User, Building, Briefcase, Landmark, Crown, Brain, Loader2, ShieldAlert, TrendingUp, IndianRupee, AlertTriangle, Scan } from "lucide-react";
+import { Search, User, Building, Briefcase, Landmark, Crown, Brain, Loader2, ShieldAlert, TrendingUp, IndianRupee, AlertTriangle, Scan, Globe, ExternalLink } from "lucide-react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import AppLayout from "@/components/layout/AppLayout";
 import RiskBadge from "@/components/dashboard/RiskBadge";
 import RiskScoreGauge from "@/components/dashboard/RiskScoreGauge";
-import { fetchEntities, analyzeEntity, investigateEntity, DbEntity } from "@/lib/api";
+import { fetchEntities, analyzeEntity, investigateEntity, scrapeEntityIntel, DbEntity } from "@/lib/api";
 import type { RiskLevel } from "@/data/mockData";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
