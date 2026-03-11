@@ -29,6 +29,7 @@ function formatCurrency(amount: number) {
 function EntityProfile({ entity }: { entity: DbEntity }) {
   const [aiResult, setAiResult] = useState<any>(null);
   const [investigationResult, setInvestigationResult] = useState<any>(null);
+  const [scrapeResult, setScrapeResult] = useState<any>(null);
 
   const aiMutation = useMutation({
     mutationFn: () => analyzeEntity(entity),
@@ -40,6 +41,12 @@ function EntityProfile({ entity }: { entity: DbEntity }) {
     mutationFn: () => investigateEntity(entity),
     onSuccess: (data) => { setInvestigationResult(data); toast.success("Deep investigation complete"); },
     onError: (err: any) => toast.error(err.message || "Investigation failed"),
+  });
+
+  const scrapeMutation = useMutation({
+    mutationFn: () => scrapeEntityIntel(entity.name, entity.type),
+    onSuccess: (data) => { setScrapeResult(data); toast.success(`Web scraping complete — ${data.articles_found} articles found`); },
+    onError: (err: any) => toast.error(err.message || "Web scraping failed"),
   });
 
   const factors = [
