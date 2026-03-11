@@ -99,10 +99,15 @@ export type Database = {
           contracts_count: number | null
           created_at: string | null
           dark_web_signals: number | null
+          declared_income: number | null
           department: string | null
           designation: string | null
+          disproportionate_wealth: boolean | null
           financial_anomalies: number | null
           id: string
+          income_spending_ratio: number | null
+          known_assets: number | null
+          known_spending: number | null
           location: string
           name: string
           news_hits: number | null
@@ -112,6 +117,7 @@ export type Database = {
           risk_score: number | null
           type: Database["public"]["Enums"]["entity_type"]
           updated_at: string | null
+          wealth_source: string | null
         }
         Insert: {
           avatar_url?: string | null
@@ -120,10 +126,15 @@ export type Database = {
           contracts_count?: number | null
           created_at?: string | null
           dark_web_signals?: number | null
+          declared_income?: number | null
           department?: string | null
           designation?: string | null
+          disproportionate_wealth?: boolean | null
           financial_anomalies?: number | null
           id?: string
+          income_spending_ratio?: number | null
+          known_assets?: number | null
+          known_spending?: number | null
           location: string
           name: string
           news_hits?: number | null
@@ -133,6 +144,7 @@ export type Database = {
           risk_score?: number | null
           type: Database["public"]["Enums"]["entity_type"]
           updated_at?: string | null
+          wealth_source?: string | null
         }
         Update: {
           avatar_url?: string | null
@@ -141,10 +153,15 @@ export type Database = {
           contracts_count?: number | null
           created_at?: string | null
           dark_web_signals?: number | null
+          declared_income?: number | null
           department?: string | null
           designation?: string | null
+          disproportionate_wealth?: boolean | null
           financial_anomalies?: number | null
           id?: string
+          income_spending_ratio?: number | null
+          known_assets?: number | null
+          known_spending?: number | null
           location?: string
           name?: string
           news_hits?: number | null
@@ -154,6 +171,7 @@ export type Database = {
           risk_score?: number | null
           type?: Database["public"]["Enums"]["entity_type"]
           updated_at?: string | null
+          wealth_source?: string | null
         }
         Relationships: []
       }

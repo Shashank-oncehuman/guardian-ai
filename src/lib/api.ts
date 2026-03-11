@@ -19,6 +19,12 @@ export interface DbEntity {
   avatar_url: string | null;
   bio: string | null;
   created_at: string;
+  declared_income: number;
+  known_spending: number;
+  known_assets: number;
+  wealth_source: string | null;
+  income_spending_ratio: number;
+  disproportionate_wealth: boolean;
 }
 
 export interface DbComplaint {
@@ -129,6 +135,14 @@ export async function fetchDashboardStats() {
 
 export async function analyzeEntity(entityData: DbEntity) {
   const { data, error } = await supabase.functions.invoke("analyze-corruption", {
+    body: { entityData },
+  });
+  if (error) throw error;
+  return data;
+}
+
+export async function investigateEntity(entityData: DbEntity) {
+  const { data, error } = await supabase.functions.invoke("investigate-entity", {
     body: { entityData },
   });
   if (error) throw error;
