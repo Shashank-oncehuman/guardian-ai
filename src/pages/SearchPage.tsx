@@ -247,7 +247,9 @@ function EntityProfile({ entity }: { entity: DbEntity }) {
             </div>
           )}
         </motion.div>
-      )
+      )}
+
+      {/* AI Analysis Result */}
       {aiResult && (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-4 rounded-lg bg-primary/5 border border-primary/20 space-y-3">
           <div className="flex items-center gap-2 mb-2">
