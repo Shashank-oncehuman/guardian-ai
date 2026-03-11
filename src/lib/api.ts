@@ -148,3 +148,19 @@ export async function investigateEntity(entityData: DbEntity) {
   if (error) throw error;
   return data;
 }
+
+export async function scrapeEntityIntel(entityName: string, entityType: string) {
+  const { data, error } = await supabase.functions.invoke("scrape-entity-intel", {
+    body: { entityName, entityType },
+  });
+  if (error) throw error;
+  return data;
+}
+
+export async function scrapeLatestNews(query: string) {
+  const { data, error } = await supabase.functions.invoke("scrape-entity-intel", {
+    body: { entityName: query, entityType: "news_scan" },
+  });
+  if (error) throw error;
+  return data;
+}

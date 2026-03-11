@@ -5,3 +5,6 @@ verify_jwt = false
 
 [functions.investigate-entity]
 verify_jwt = false
+
+[functions.scrape-entity-intel]
+verify_jwt = false
