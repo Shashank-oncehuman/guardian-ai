@@ -140,3 +140,11 @@ export async function analyzeEntity(entityData: DbEntity) {
   if (error) throw error;
   return data;
 }
+
+export async function investigateEntity(entityData: DbEntity) {
+  const { data, error } = await supabase.functions.invoke("investigate-entity", {
+    body: { entityData },
+  });
+  if (error) throw error;
+  return data;
+}
