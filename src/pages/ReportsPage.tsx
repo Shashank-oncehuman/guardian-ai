@@ -111,7 +111,7 @@ function generatePDF(entity: DbEntity) {
 export default function ReportsPage() {
   const { data: entities } = useQuery({ queryKey: ["entities-reports"], queryFn: () => fetchEntities() });
 
-  const reports = (entities || []).filter((e) => e.risk_score >= 40).map((e) => ({
+  const reports = (entities || []).map((e) => ({
     ...e,
     sections: ["Profile Summary", "Contract Analysis", "Complaint History", "Network Relationships", "AI Prediction", "Evidence Summary"],
   }));
