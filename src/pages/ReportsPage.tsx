@@ -148,7 +148,7 @@ export default function ReportsPage() {
               </div>
               <div className="flex items-center gap-3 shrink-0">
                 <RiskBadge level={report.risk_level as RiskLevel} />
-                <Button size="sm" variant="outline" onClick={() => toast.info("PDF generation available with full backend integration")} className="text-xs border-border/50 text-foreground hover:bg-secondary">
+                <Button size="sm" variant="outline" onClick={() => { generatePDF(report); toast.success(`PDF generated for ${report.name}`); }} className="text-xs border-border/50 text-foreground hover:bg-secondary">
                   <Download className="w-3.5 h-3.5 mr-1.5" /> PDF
                 </Button>
               </div>
