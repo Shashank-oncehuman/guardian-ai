@@ -27,6 +27,7 @@ const App = () => (
           <Route path="/whistleblower" element={<WhistleblowerPage />} />
           <Route path="/reports" element={<ReportsPage />} />
           <Route path="/heatmap" element={<HeatmapPage />} />
+          <Route path="/timeline" element={<TimelinePage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

@@ -15,6 +15,7 @@ const navItems = [
   { path: "/whistleblower", label: "Whistleblower", icon: MessageSquareWarning },
   { path: "/reports", label: "Reports", icon: FileText },
   { path: "/heatmap", label: "Heatmap", icon: Map },
+  { path: "/timeline", label: "Timeline", icon: Clock },
 ];
 
 interface Props {
