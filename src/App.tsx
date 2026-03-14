@@ -9,6 +9,7 @@ import NewsPage from "./pages/NewsPage.tsx";
 import WhistleblowerPage from "./pages/WhistleblowerPage.tsx";
 import ReportsPage from "./pages/ReportsPage.tsx";
 import HeatmapPage from "./pages/HeatmapPage.tsx";
+import TimelinePage from "./pages/TimelinePage.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -26,6 +27,7 @@ const App = () => (
           <Route path="/whistleblower" element={<WhistleblowerPage />} />
           <Route path="/reports" element={<ReportsPage />} />
           <Route path="/heatmap" element={<HeatmapPage />} />
+          <Route path="/timeline" element={<TimelinePage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

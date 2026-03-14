@@ -3,7 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   LayoutDashboard, Search, Network, Newspaper, Shield, FileText,
-  MessageSquareWarning, Map, ChevronLeft, ChevronRight, X
+  MessageSquareWarning, Map, ChevronLeft, ChevronRight, X, Clock
 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -15,6 +15,7 @@ const navItems = [
   { path: "/whistleblower", label: "Whistleblower", icon: MessageSquareWarning },
   { path: "/reports", label: "Reports", icon: FileText },
   { path: "/heatmap", label: "Heatmap", icon: Map },
+  { path: "/timeline", label: "Timeline", icon: Clock },
 ];
 
 interface Props {
