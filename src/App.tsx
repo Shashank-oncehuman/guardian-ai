@@ -9,6 +9,7 @@ import NewsPage from "./pages/NewsPage.tsx";
 import WhistleblowerPage from "./pages/WhistleblowerPage.tsx";
 import ReportsPage from "./pages/ReportsPage.tsx";
 import HeatmapPage from "./pages/HeatmapPage.tsx";
+import TimelinePage from "./pages/TimelinePage.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
