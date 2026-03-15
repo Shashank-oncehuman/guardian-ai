@@ -164,3 +164,35 @@ export async function scrapeLatestNews(query: string) {
   if (error) throw error;
   return data;
 }
+
+export interface DbTimelineEvent {
+  id: string;
+  date: string;
+  title: string;
+  description: string;
+  category: string;
+  risk_level: string;
+  entities: string[];
+  proof: string | null;
+  source: string | null;
+  linked_entity_ids: string[] | null;
+  created_at: string;
+}
+
+export async function fetchTimelineEvents(category?: string) {
+  let query = supabase.from("timeline_events").select("*").order("date", { ascending: false });
+  if (category && category !== "all") {
+    query = query.eq("category", category);
+  }
+  const { data, error } = await query;
+  if (error) throw error;
+  return data as DbTimelineEvent[];
+}
+
+export async function seedTimelineEvents(events: Omit<DbTimelineEvent, "id" | "created_at">[]) {
+  const { data, error } = await supabase.from("timeline_events").insert(
+    events.map(e => ({ ...e, risk_level: e.risk_level as "low" | "medium" | "high" }))
+  ).select();
+  if (error) throw error;
+  return data;
+}
