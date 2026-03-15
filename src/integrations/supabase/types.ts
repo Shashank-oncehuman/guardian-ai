@@ -297,6 +297,48 @@ export type Database = {
           },
         ]
       }
+      timeline_events: {
+        Row: {
+          category: string
+          created_at: string | null
+          date: string
+          description: string
+          entities: string[]
+          id: string
+          linked_entity_ids: string[] | null
+          proof: string | null
+          risk_level: Database["public"]["Enums"]["risk_level"]
+          source: string | null
+          title: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string | null
+          date: string
+          description: string
+          entities?: string[]
+          id?: string
+          linked_entity_ids?: string[] | null
+          proof?: string | null
+          risk_level?: Database["public"]["Enums"]["risk_level"]
+          source?: string | null
+          title: string
+        }
+        Update: {
+          category?: string
+          created_at?: string | null
+          date?: string
+          description?: string
+          entities?: string[]
+          id?: string
+          linked_entity_ids?: string[] | null
+          proof?: string | null
+          risk_level?: Database["public"]["Enums"]["risk_level"]
+          source?: string | null
+          title?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
