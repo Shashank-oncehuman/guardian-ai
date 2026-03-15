@@ -190,7 +190,9 @@ export async function fetchTimelineEvents(category?: string) {
 }
 
 export async function seedTimelineEvents(events: Omit<DbTimelineEvent, "id" | "created_at">[]) {
-  const { data, error } = await supabase.from("timeline_events").insert(events).select();
+  const { data, error } = await supabase.from("timeline_events").insert(
+    events.map(e => ({ ...e, risk_level: e.risk_level as "low" | "medium" | "high" }))
+  ).select();
   if (error) throw error;
   return data;
 }
