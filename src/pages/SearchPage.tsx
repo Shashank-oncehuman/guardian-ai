@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, User, Building, Briefcase, Landmark, Crown, Brain, Loader2, ShieldAlert, TrendingUp, IndianRupee, AlertTriangle, Scan, Globe, ExternalLink } from "lucide-react";
 import { useQuery, useMutation } from "@tanstack/react-query";
