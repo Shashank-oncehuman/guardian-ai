@@ -2,6 +2,10 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import SmoothScroll from "@/components/cinematic/SmoothScroll";
+import ParticleField from "@/components/cinematic/ParticleField";
+import FilmOverlay from "@/components/cinematic/FilmOverlay";
+import CinematicLoader from "@/components/cinematic/CinematicLoader";
 import Index from "./pages/Index.tsx";
 import SearchPage from "./pages/SearchPage.tsx";
 import NetworkPage from "./pages/NetworkPage.tsx";
@@ -17,6 +21,10 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
+      <SmoothScroll />
+      <ParticleField />
+      <FilmOverlay />
+      <CinematicLoader />
       <Sonner />
       <BrowserRouter>
         <Routes>

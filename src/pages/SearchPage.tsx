@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, User, Building, Briefcase, Landmark, Crown, Brain, Loader2, ShieldAlert, TrendingUp, IndianRupee, AlertTriangle, Scan, Globe, ExternalLink } from "lucide-react";
 import { useQuery, useMutation } from "@tanstack/react-query";
@@ -431,8 +432,14 @@ function EntityProfile({ entity }: { entity: DbEntity }) {
 }
 
 export default function SearchPage() {
-  const [query, setQuery] = useState("");
+  const [searchParams] = useSearchParams();
+  const [query, setQuery] = useState(searchParams.get("q") || "");
   const [selected, setSelected] = useState<DbEntity | null>(null);
+
+  useEffect(() => {
+    const q = searchParams.get("q");
+    if (q) setQuery(q);
+  }, [searchParams]);
 
   const { data: entities, isLoading } = useQuery({
     queryKey: ["entities-search", query],

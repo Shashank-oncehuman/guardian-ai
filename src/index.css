@@ -139,4 +139,48 @@
   .animate-pulse-glow {
     animation: pulse-glow 2s ease-in-out infinite;
   }
+
+  /* Cinematic button effects */
+  .btn-cinematic {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-cinematic::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), hsl(var(--primary) / 0.15), transparent 60%);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .btn-cinematic:hover::before {
+    opacity: 1;
+  }
+
+  /* Cinematic card tilt */
+  .card-cinematic {
+    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.4s;
+  }
+
+  .card-cinematic:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.4), var(--glow-primary);
+  }
+
+  /* Ambient light sweep */
+  @keyframes light-sweep {
+    0% { transform: translateX(-100%) rotate(12deg); }
+    100% { transform: translateX(200%) rotate(12deg); }
+  }
+
+  .light-sweep::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, hsl(var(--primary) / 0.04), transparent);
+    animation: light-sweep 6s ease-in-out infinite;
+    pointer-events: none;
+  }
 }

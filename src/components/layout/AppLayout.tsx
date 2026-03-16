@@ -29,7 +29,7 @@ export default function AppLayout({ children }: { children: ReactNode }) {
         </header>
       )}
 
-      <main className={`min-h-screen p-4 sm:p-6 transition-all ${isMobile ? "ml-0 pt-18" : "ml-[260px]"}`}>
+      <main className={`min-h-screen p-4 sm:p-6 transition-all relative z-10 ${isMobile ? "ml-0 pt-18" : "ml-[260px]"}`}>
         {children}
       </main>
     </div>
