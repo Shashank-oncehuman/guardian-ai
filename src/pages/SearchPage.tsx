@@ -432,8 +432,14 @@ function EntityProfile({ entity }: { entity: DbEntity }) {
 }
 
 export default function SearchPage() {
-  const [query, setQuery] = useState("");
+  const [searchParams] = useSearchParams();
+  const [query, setQuery] = useState(searchParams.get("q") || "");
   const [selected, setSelected] = useState<DbEntity | null>(null);
+
+  useEffect(() => {
+    const q = searchParams.get("q");
+    if (q) setQuery(q);
+  }, [searchParams]);
 
   const { data: entities, isLoading } = useQuery({
     queryKey: ["entities-search", query],
