@@ -1,9 +1,11 @@
 import { motion } from "framer-motion";
 import { Calendar, AlertTriangle, Users, Banknote, FileWarning, Globe, ChevronDown, ChevronUp, Loader2, Database } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 import AppLayout from "@/components/layout/AppLayout";
 import RiskBadge from "@/components/dashboard/RiskBadge";
+import ScrollReveal from "@/components/cinematic/ScrollReveal";
 import type { RiskLevel } from "@/data/mockData";
 import { fetchTimelineEvents, seedTimelineEvents, type DbTimelineEvent } from "@/lib/api";
 import { Button } from "@/components/ui/button";
@@ -25,7 +27,6 @@ const SEED_EVENTS = [
   { date: "2024-11-10", title: "Erdogan Family Offshore Wealth Exposed", description: "Leaks reveal Erdogan family control offshore accounts worth hundreds of millions.", category: "financial", risk_level: "high", entities: ["Recep Tayyip Erdogan"], proof: "Paradise Papers document companies in Isle of Man and BVI.", source: "ICIJ, Paradise Papers" },
   { date: "2025-03-01", title: "Trump-Putin Helsinki Summit Transcripts Leaked", description: "Undisclosed details of private Trump-Putin meetings surface.", category: "international", risk_level: "high", entities: ["Donald Trump", "Vladimir Putin"], proof: "Mueller Report documented 140+ contacts between Trump campaign and Russian-linked operatives.", source: "Mueller Report, Senate Intelligence Committee" },
   { date: "2024-08-05", title: "Modi Government Accused of Weaponizing ED/CBI", description: "Opposition alleges 95% of ED cases target opposition-ruled states.", category: "policy", risk_level: "high", entities: ["Narendra Modi", "Amit Shah"], proof: "95% of politically-linked ED raids target opposition. Conviction rate below 1%.", source: "NDTV Data Analysis" },
-  // Indian state-level scandals
   { date: "2013-04-15", title: "Saradha Chit Fund Scam — ₹2,500 Cr Ponzi Scheme", description: "Saradha Group chit fund collapses affecting 1.7 million depositors across West Bengal and Northeast India. TMC leaders implicated.", category: "scandal", risk_level: "high", entities: ["Mamata Banerjee", "Sudipta Sen", "Madan Mitra"], proof: "CBI chargesheet names TMC MPs Kunal Ghosh, Srinjoy Bose. Sudipta Sen letter names senior TMC leaders as beneficiaries of ₹2,460 Cr fraud.", source: "CBI Chargesheet, Sudipta Sen Confession" },
   { date: "2013-07-07", title: "Vyapam Scam — Madhya Pradesh Mega Fraud", description: "Massive admission and recruitment fraud involving 2,000+ accused including politicians, bureaucrats. Over 40 mysterious deaths of witnesses.", category: "scandal", risk_level: "high", entities: ["Shivraj Singh Chouhan", "BJP"], proof: "Supreme Court-monitored CBI probe. Over 2,500 accused chargesheeted. 40+ witnesses died mysteriously. Scam spans 13 years.", source: "Supreme Court Orders, CBI Investigation" },
   { date: "2011-08-25", title: "Bellary Mining Scam — Reddy Brothers Empire", description: "Illegal mining in Karnataka Bellary district caused ₹16,000 Cr loss to exchequer. BJP government shielded operations.", category: "financial", risk_level: "high", entities: ["Gali Janardhan Reddy", "B.S. Yediyurappa", "BJP"], proof: "Lokayukta Justice Santosh Hegde report documented ₹16,085 Cr illegal mining. Yediyurappa forced to resign as CM.", source: "Lokayukta Report, CBI Chargesheet" },
@@ -52,70 +53,88 @@ const categoryConfig: Record<string, { icon: typeof Calendar; color: string; lab
   arrest: { icon: AlertTriangle, color: "text-destructive", label: "Arrest" },
 };
 
+function EntityLink({ name }: { name: string }) {
+  const navigate = useNavigate();
+  return (
+    <button
+      onClick={(e) => {
+        e.stopPropagation();
+        navigate(`/search?q=${encodeURIComponent(name)}`);
+      }}
+      className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-medium hover:bg-primary/25 hover:scale-105 transition-all duration-200 cursor-pointer"
+    >
+      {name}
+    </button>
+  );
+}
+
 function TimelineCard({ event, index, total }: { event: DbTimelineEvent; index: number; total: number }) {
   const [expanded, setExpanded] = useState(false);
   const config = categoryConfig[event.category] || categoryConfig.scandal;
   const Icon = config.icon;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, x: index % 2 === 0 ? -30 : 30 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ delay: index * 0.03, duration: 0.4 }}
-      className="relative flex gap-4"
-    >
-      <div className="flex flex-col items-center shrink-0">
-        <div className={`w-10 h-10 rounded-full border-2 border-border bg-card flex items-center justify-center ${config.color}`}>
-          <Icon className="w-4 h-4" />
-        </div>
-        {index < total - 1 && <div className="w-0.5 flex-1 bg-border/50 mt-2" />}
-      </div>
-
-      <div className="glass-panel-hover p-4 mb-4 flex-1 max-w-3xl">
-        <div className="flex items-start justify-between gap-3 mb-2">
-          <div className="flex-1">
-            <div className="flex items-center gap-2 mb-1 flex-wrap">
-              <span className="text-[10px] font-mono text-muted-foreground bg-secondary px-2 py-0.5 rounded">
-                {new Date(event.date).toLocaleDateString("en-IN", { year: "numeric", month: "short", day: "numeric" })}
-              </span>
-              <span className={`text-[10px] px-2 py-0.5 rounded-full bg-secondary ${config.color}`}>
-                {config.label}
-              </span>
-              <RiskBadge level={event.risk_level as RiskLevel} />
-            </div>
-            <h3 className="text-sm font-semibold text-foreground">{event.title}</h3>
-          </div>
-          <button onClick={() => setExpanded(!expanded)} className="p-1.5 rounded-lg hover:bg-secondary/80 text-muted-foreground shrink-0">
-            {expanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-          </button>
-        </div>
-
-        <p className="text-xs text-muted-foreground leading-relaxed">{event.description}</p>
-
-        <div className="flex flex-wrap gap-1.5 mt-2">
-          {event.entities.map((e) => (
-            <span key={e} className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-medium">{e}</span>
-          ))}
-        </div>
-
-        {expanded && (
-          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="mt-3 pt-3 border-t border-border/50 space-y-2">
-            {event.proof && (
-              <div>
-                <p className="text-[10px] font-semibold text-destructive uppercase tracking-wider mb-1">Evidence / Proof</p>
-                <p className="text-xs text-foreground/80 leading-relaxed">{event.proof}</p>
-              </div>
-            )}
-            {event.source && (
-              <div>
-                <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1">Source</p>
-                <p className="text-xs text-accent">{event.source}</p>
-              </div>
-            )}
+    <ScrollReveal direction={index % 2 === 0 ? "left" : "right"} delay={index * 0.02}>
+      <div className="relative flex gap-4">
+        <div className="flex flex-col items-center shrink-0">
+          <motion.div
+            whileHover={{ scale: 1.2, rotate: 10 }}
+            className={`w-10 h-10 rounded-full border-2 border-border bg-card flex items-center justify-center ${config.color} transition-shadow hover:shadow-lg`}
+          >
+            <Icon className="w-4 h-4" />
           </motion.div>
-        )}
+          {index < total - 1 && <div className="w-0.5 flex-1 bg-border/50 mt-2" />}
+        </div>
+
+        <motion.div
+          whileHover={{ y: -2 }}
+          className="glass-panel-hover p-4 mb-4 flex-1 max-w-3xl"
+        >
+          <div className="flex items-start justify-between gap-3 mb-2">
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-1 flex-wrap">
+                <span className="text-[10px] font-mono text-muted-foreground bg-secondary px-2 py-0.5 rounded">
+                  {new Date(event.date).toLocaleDateString("en-IN", { year: "numeric", month: "short", day: "numeric" })}
+                </span>
+                <span className={`text-[10px] px-2 py-0.5 rounded-full bg-secondary ${config.color}`}>
+                  {config.label}
+                </span>
+                <RiskBadge level={event.risk_level as RiskLevel} />
+              </div>
+              <h3 className="text-sm font-semibold text-foreground">{event.title}</h3>
+            </div>
+            <button onClick={() => setExpanded(!expanded)} className="p-1.5 rounded-lg hover:bg-secondary/80 text-muted-foreground shrink-0">
+              {expanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+            </button>
+          </div>
+
+          <p className="text-xs text-muted-foreground leading-relaxed">{event.description}</p>
+
+          <div className="flex flex-wrap gap-1.5 mt-2">
+            {event.entities.map((e) => (
+              <EntityLink key={e} name={e} />
+            ))}
+          </div>
+
+          {expanded && (
+            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} className="mt-3 pt-3 border-t border-border/50 space-y-2">
+              {event.proof && (
+                <div>
+                  <p className="text-[10px] font-semibold text-destructive uppercase tracking-wider mb-1">Evidence / Proof</p>
+                  <p className="text-xs text-foreground/80 leading-relaxed">{event.proof}</p>
+                </div>
+              )}
+              {event.source && (
+                <div>
+                  <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider mb-1">Source</p>
+                  <p className="text-xs text-accent">{event.source}</p>
+                </div>
+              )}
+            </motion.div>
+          )}
+        </motion.div>
       </div>
-    </motion.div>
+    </ScrollReveal>
   );
 }
 
@@ -152,24 +171,34 @@ export default function TimelinePage() {
 
   return (
     <AppLayout>
-      <div className="space-y-6">
-        <div>
-          <h1 className="text-2xl font-bold">Corruption Timeline</h1>
-          <p className="text-sm text-muted-foreground mt-1">Chronological history of corruption events, investigations, and scandals with evidence</p>
-        </div>
+      <div className="space-y-6 relative z-10">
+        <ScrollReveal direction="up">
+          <div>
+            <motion.h1
+              initial={{ opacity: 0, letterSpacing: "0.2em", filter: "blur(6px)" }}
+              animate={{ opacity: 1, letterSpacing: "0.02em", filter: "blur(0px)" }}
+              transition={{ duration: 0.8 }}
+              className="text-2xl font-bold"
+            >
+              Corruption Timeline
+            </motion.h1>
+            <p className="text-sm text-muted-foreground mt-1">Chronological history of corruption events, investigations, and scandals with evidence</p>
+          </div>
+        </ScrollReveal>
 
-        {/* Category filter */}
         <div className="flex flex-wrap gap-2">
           {["all", ...Object.keys(categoryConfig)].map((cat) => (
-            <button
+            <motion.button
               key={cat}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={() => setFilter(cat)}
-              className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
-                filter === cat ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground hover:text-foreground"
+              className={`px-3 py-1.5 rounded-full text-xs font-medium transition-all duration-300 ${
+                filter === cat ? "bg-primary text-primary-foreground shadow-lg shadow-primary/25" : "bg-secondary text-muted-foreground hover:text-foreground"
               }`}
             >
               {cat === "all" ? "All Events" : categoryConfig[cat].label}
-            </button>
+            </motion.button>
           ))}
         </div>
 
