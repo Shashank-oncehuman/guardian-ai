@@ -8,6 +8,7 @@ import ParticleField from "@/components/cinematic/ParticleField";
 import FilmOverlay from "@/components/cinematic/FilmOverlay";
 import CinematicLoader from "@/components/cinematic/CinematicLoader";
 import PageTransition from "@/components/cinematic/PageTransition";
+import SoundToggle from "@/components/cinematic/SoundToggle";
 import Index from "./pages/Index.tsx";
 import SearchPage from "./pages/SearchPage.tsx";
 import NetworkPage from "./pages/NetworkPage.tsx";
