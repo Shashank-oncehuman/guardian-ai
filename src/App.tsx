@@ -53,6 +53,7 @@ const App = () => (
       <FilmOverlay />
       <CinematicLoader />
       <Sonner />
+      <SoundToggle />
       <BrowserRouter>
         <AnimatedRoutes />
       </BrowserRouter>
