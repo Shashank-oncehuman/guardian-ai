@@ -1,19 +1,26 @@
 import { motion } from "framer-motion";
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
+import { cinematicAudio } from "@/lib/cinematicAudio";
 
 interface PageTransitionProps {
   children: ReactNode;
 }
 
-const PageTransition = ({ children }: PageTransitionProps) => (
-  <motion.div
-    initial={{ opacity: 0 }}
-    animate={{ opacity: 1 }}
-    exit={{ opacity: 0 }}
-    transition={{ duration: 0.4, ease: "easeInOut" }}
-  >
-    {children}
-  </motion.div>
-);
+const PageTransition = ({ children }: PageTransitionProps) => {
+  useEffect(() => {
+    cinematicAudio.playTransition();
+  }, []);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.4, ease: "easeInOut" }}
+    >
+      {children}
+    </motion.div>
+  );
+};
 
 export default PageTransition;

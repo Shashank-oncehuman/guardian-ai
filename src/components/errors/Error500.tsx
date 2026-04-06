@@ -1,8 +1,11 @@
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useEffect } from "react";
+import { cinematicAudio } from "@/lib/cinematicAudio";
 
 const Error500 = () => {
   const navigate = useNavigate();
+  useEffect(() => { cinematicAudio.playError("500"); }, []);
 
   return (
     <div className="relative min-h-screen overflow-hidden flex items-center justify-center" style={{ background: "linear-gradient(135deg, hsl(280 40% 8%), hsl(320 50% 12%), hsl(270 45% 10%))" }}>
