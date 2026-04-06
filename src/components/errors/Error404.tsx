@@ -1,9 +1,13 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useEffect } from "react";
+import { cinematicAudio } from "@/lib/cinematicAudio";
 
 const Error404 = () => {
   const location = useLocation();
   const navigate = useNavigate();
+
+  useEffect(() => { cinematicAudio.playError("404"); }, []);
 
   return (
     <div className="relative min-h-screen overflow-hidden flex items-center justify-center" style={{ background: "linear-gradient(135deg, hsl(240 40% 8%), hsl(260 50% 12%), hsl(220 45% 10%))" }}>
