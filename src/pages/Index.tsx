@@ -12,7 +12,6 @@ import { fetchDashboardStats, fetchEntities, fetchNewsReports } from "@/lib/api"
 import type { RiskLevel } from "@/data/mockData";
 import { trendData, departmentRisk } from "@/data/mockData";
 
-
 function TypingSubtitle() {
   const text = "Real-time corruption intelligence overview";
   const [count, setCount] = useState(0);
