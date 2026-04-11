@@ -6,6 +6,7 @@ import AppLayout from "@/components/layout/AppLayout";
 import StatCard from "@/components/dashboard/StatCard";
 import RiskBadge from "@/components/dashboard/RiskBadge";
 import ScrollReveal from "@/components/cinematic/ScrollReveal";
+import HeroBackground from "@/components/cinematic/HeroBackground";
 import { fetchDashboardStats, fetchEntities, fetchNewsReports } from "@/lib/api";
 import type { RiskLevel } from "@/data/mockData";
 import { trendData, departmentRisk } from "@/data/mockData";
