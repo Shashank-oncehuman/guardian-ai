@@ -6,6 +6,7 @@ import AppLayout from "@/components/layout/AppLayout";
 import StatCard from "@/components/dashboard/StatCard";
 import RiskBadge from "@/components/dashboard/RiskBadge";
 import ScrollReveal from "@/components/cinematic/ScrollReveal";
+import HeroBackground from "@/components/cinematic/HeroBackground";
 import { fetchDashboardStats, fetchEntities, fetchNewsReports } from "@/lib/api";
 import type { RiskLevel } from "@/data/mockData";
 import { trendData, departmentRisk } from "@/data/mockData";
@@ -24,9 +25,9 @@ export default function Dashboard() {
         {/* Cinematic Hero Header */}
         <ScrollReveal direction="up">
           <div className="relative overflow-hidden rounded-2xl p-8 mb-2">
-            {/* Animated gradient background */}
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-accent/10 animate-pulse-glow" />
-            <div className="absolute inset-0 bg-gradient-to-r from-background via-transparent to-background" />
+            {/* Cinematic animated background */}
+            <HeroBackground />
+            <div className="absolute inset-0 bg-gradient-to-r from-background/80 via-transparent to-background/80" />
             
             <div className="relative flex items-center justify-between">
               <div>
