@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { AlertTriangle, FileSearch, Users, Brain, Shield, Activity, Eye } from "lucide-react";
 import { Area, AreaChart, Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
@@ -10,6 +11,39 @@ import HeroBackground from "@/components/cinematic/HeroBackground";
 import { fetchDashboardStats, fetchEntities, fetchNewsReports } from "@/lib/api";
 import type { RiskLevel } from "@/data/mockData";
 import { trendData, departmentRisk } from "@/data/mockData";
+
+
+function TypingSubtitle() {
+  const text = "Real-time corruption intelligence overview";
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    const delay = setTimeout(() => {
+      if (count >= text.length) return;
+      const id = setInterval(() => {
+        setCount((c) => {
+          if (c >= text.length) { clearInterval(id); return c; }
+          return c + 1;
+        });
+      }, 45);
+      return () => clearInterval(id);
+    }, 3000);
+    return () => clearTimeout(delay);
+  }, []);
+
+  return (
+    <p className="text-sm text-muted-foreground mt-2 h-5">
+      <span className="opacity-70">{text.slice(0, count)}</span>
+      {count < text.length && (
+        <motion.span
+          animate={{ opacity: [1, 0] }}
+          transition={{ repeat: Infinity, duration: 0.6 }}
+          className="inline-block w-[2px] h-[14px] bg-primary ml-0.5 align-middle"
+        />
+      )}
+    </p>
+  );
+}
 
 export default function Dashboard() {
   const { data: stats } = useQuery({ queryKey: ["dashboard-stats"], queryFn: fetchDashboardStats });
@@ -40,14 +74,7 @@ export default function Dashboard() {
                     Intelligence Dashboard
                   </h1>
                 </motion.div>
-                <motion.p
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 0.7, y: 0 }}
-                  transition={{ delay: 3.0, duration: 0.6 }}
-                  className="text-sm text-muted-foreground mt-2"
-                >
-                  Real-time corruption intelligence overview
-                </motion.p>
+                <TypingSubtitle />
               </div>
               <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
