@@ -40,14 +40,7 @@ export default function Dashboard() {
                     Intelligence Dashboard
                   </h1>
                 </motion.div>
-                <motion.p
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 0.7, y: 0 }}
-                  transition={{ delay: 3.0, duration: 0.6 }}
-                  className="text-sm text-muted-foreground mt-2"
-                >
-                  Real-time corruption intelligence overview
-                </motion.p>
+                <TypingSubtitle />
               </div>
               <motion.div
                 initial={{ opacity: 0, scale: 0.8 }}
