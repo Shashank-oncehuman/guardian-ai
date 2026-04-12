@@ -58,7 +58,6 @@ function EntityProfile({ entity }: { entity: DbEntity }) {
   }, [entity.id]);
 
   const factors = [
-    { label: "Complaint History", value: entity.complaints_count, max: 35 },
     { label: "Contract Irregularities", value: entity.contracts_count > 40 ? 30 : entity.contracts_count > 20 ? 15 : 5, max: 30 },
     { label: "Political Connections", value: entity.political_connections, max: 20 },
     { label: "News Scandals", value: entity.news_hits, max: 50 },
