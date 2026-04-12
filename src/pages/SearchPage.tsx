@@ -58,7 +58,6 @@ function EntityProfile({ entity }: { entity: DbEntity }) {
   }, [entity.id]);
 
   const factors = [
-    { label: "Complaint History", value: entity.complaints_count, max: 35 },
     { label: "Contract Irregularities", value: entity.contracts_count > 40 ? 30 : entity.contracts_count > 20 ? 15 : 5, max: 30 },
     { label: "Political Connections", value: entity.political_connections, max: 20 },
     { label: "News Scandals", value: entity.news_hits, max: 50 },
@@ -91,7 +90,6 @@ function EntityProfile({ entity }: { entity: DbEntity }) {
           {entity.bio && <p className="text-xs text-muted-foreground mt-2 leading-relaxed line-clamp-3 sm:line-clamp-none">{entity.bio}</p>}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 mt-4">
             {[
-              { v: entity.complaints_count, l: "Complaints" },
               { v: entity.contracts_count, l: "Contracts" },
               { v: entity.news_hits, l: "News Hits" },
               { v: entity.dark_web_signals, l: "Dark Web" },
