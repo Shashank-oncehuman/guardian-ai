@@ -91,7 +91,6 @@ function EntityProfile({ entity }: { entity: DbEntity }) {
           {entity.bio && <p className="text-xs text-muted-foreground mt-2 leading-relaxed line-clamp-3 sm:line-clamp-none">{entity.bio}</p>}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 mt-4">
             {[
-              { v: entity.complaints_count, l: "Complaints" },
               { v: entity.contracts_count, l: "Contracts" },
               { v: entity.news_hits, l: "News Hits" },
               { v: entity.dark_web_signals, l: "Dark Web" },
